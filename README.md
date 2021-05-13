@@ -14,7 +14,7 @@ TODO LIST
 - [ ] Trans* algorithem test benchmark
 - [x] TransE
     - [x] implement the basic algorithm
-    - [ ] add the L1 regularization
+    - [x] add the L1 loss
 - [ ] TransH
 - [ ] TransR
 - [ ] TransD
@@ -33,5 +33,5 @@ Paper
 
 Thanks
 ======
-A fair implementation by [wuxiyu](https://github.com/wuxiyu/transE)
-Another C++ implementation and provided an available FB15k dataset download link by [Mrlyk423](https://github.com/mrlyk423/relation_extraction)
+* A fair implementation by [wuxiyu](https://github.com/wuxiyu/transE)
+* Another C++ implementation and provided an available FB15k dataset download link by [Mrlyk423](https://github.com/mrlyk423/relation_extraction)

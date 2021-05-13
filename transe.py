@@ -60,7 +60,7 @@ EMB_DIM = 20
 N_EPOCH = 10000
 BATCH_SIZE = 150
 MARGIN = 1.0
-LearningRate = 0.1
+LearningRate = 10
 LOSS_TYPE = 'L1'
 
 n_entity = len(entity2id)
@@ -106,23 +106,9 @@ for epoch in range(N_EPOCH):
         dist_corrupted_triplet1 = distanceL1(fake_e1_emb, fake_e2_emb, rel_emb)
             
         eg = MARGIN + dist_triplet1 - dist_corrupted_triplet1
-        #loss.append(eg)
+        gre_positive = ((e2_emb - e1_emb - rel_emb) >0).astype(np.float64) -  ((e2_emb - e1_emb - rel_emb) <0).astype(np.float64)
+        gre_negative = ((fake_e2_emb - fake_e1_emb - rel_emb) >0).astype(np.float64) -  ((fake_e2_emb - fake_e1_emb - rel_emb) <0).astype(np.float64)
 
-        #gre_positive = 2 * LearningRate * (e2_emb - e1_emb - rel_emb) * (eg >0)[:,None]
-        #gre_negative = 2 * LearningRate * (fake_e2_emb - fake_e1_emb - rel_emb) *(eg>0)[:,None]
-    
-    
-        #e1_update_emb = e1_emb + gre_positive
-        #e2_update_emb = e2_emb - gre_positive
-        #relation_update_emb = rel_emb + gre_positive - gre_negative
-        #fake_e1_update_emb = fake_e1_emb - gre_negative
-        #fake_e2_update_emb = fake_e2_emb + gre_negative
-    
-        #ent_emb_mat[T_batch['e1_index'].values, :] = l2norm(e1_update_emb)
-        #ent_emb_mat[T_batch['e2_index'].values, :] = l2norm(e2_update_emb)
-        #ent_emb_mat[T_batch['fake_e1_index'].values, :] = l2norm(fake_e1_update_emb)
-        #ent_emb_mat[T_batch['fake_e2_index'].values, :] = l2norm(fake_e2_update_emb)
-        #rel_emb_mat[T_batch['rel_index'].values, :] = l2norm(relation_update_emb)
     else:
         #algorithm line 12 the minibatch SGD
         dist_triplet2 = distanceL2(e1_emb, e2_emb, rel_emb)
@@ -135,16 +121,16 @@ for epoch in range(N_EPOCH):
         gre_negative = 2 * LearningRate * (fake_e2_emb - fake_e1_emb - rel_emb) *(eg>0)[:,None]
     
     
-        e1_update_emb = e1_emb + gre_positive
-        e2_update_emb = e2_emb - gre_positive
-        relation_update_emb = rel_emb + gre_positive - gre_negative
-        fake_e1_update_emb = fake_e1_emb - gre_negative
-        fake_e2_update_emb = fake_e2_emb + gre_negative
+    e1_update_emb = e1_emb + gre_positive
+    e2_update_emb = e2_emb - gre_positive
+    relation_update_emb = rel_emb + gre_positive - gre_negative
+    fake_e1_update_emb = fake_e1_emb - gre_negative
+    fake_e2_update_emb = fake_e2_emb + gre_negative
     
-        ent_emb_mat[T_batch['e1_index'].values, :] = l2norm(e1_update_emb)
-        ent_emb_mat[T_batch['e2_index'].values, :] = l2norm(e2_update_emb)
-        ent_emb_mat[T_batch['fake_e1_index'].values, :] = l2norm(fake_e1_update_emb)
-        ent_emb_mat[T_batch['fake_e2_index'].values, :] = l2norm(fake_e2_update_emb)
-        rel_emb_mat[T_batch['rel_index'].values, :] = l2norm(relation_update_emb)
+    ent_emb_mat[T_batch['e1_index'].values, :] = l2norm(e1_update_emb)
+    ent_emb_mat[T_batch['e2_index'].values, :] = l2norm(e2_update_emb)
+    ent_emb_mat[T_batch['fake_e1_index'].values, :] = l2norm(fake_e1_update_emb)
+    ent_emb_mat[T_batch['fake_e2_index'].values, :] = l2norm(fake_e2_update_emb)
+    rel_emb_mat[T_batch['rel_index'].values, :] = l2norm(relation_update_emb)
     
     print(np.mean(eg[eg > 0]))
